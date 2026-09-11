@@ -131,10 +131,10 @@ td.r,th.r{text-align:right}
 .clist{display:flex;flex-direction:column}
 .cmt{display:flex;flex-direction:column;gap:3px;padding:10px 0;border-bottom:1px solid var(--hair)}
 .cmt:last-child{border-bottom:0}
-.cmt .who{font-weight:600;font-size:.9rem}
-.cmt .who span{color:var(--muted);font-weight:400;margin-left:8px;font-size:.8rem}
+.cmt .by{font-weight:600;font-size:.9rem;display:flex;align-items:baseline;gap:8px}
+.cmt .by span{color:var(--muted);font-weight:400;font-size:.8rem}
 .cmt .body{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.95rem}
-.cmt.mine .who{color:var(--accent)}
+.cmt.mine .by{color:var(--accent)}
 .more{background:none;border:0;color:var(--accent);padding:2px 0;font-size:.9rem;align-self:flex-start;font-weight:500}
 .more:hover{text-decoration:underline}
 summary .cnt{color:var(--muted);font-weight:400;font-size:.9rem;margin-left:8px}
@@ -452,7 +452,7 @@ function render(){
   const when=iso=>{const d=new Date(iso),now=new Date();const same=d.toDateString()===now.toDateString();return (same?"Today":d.toLocaleDateString(undefined,{month:"short",day:"numeric"}))+" "+d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"});};
   $("#commentCount").textContent=comments.length?comments.length:"";
   const shown=showAllComments?comments:comments.slice(0,3);
-  $("#commentList").innerHTML=shown.length?shown.map(c=>`<div class="cmt ${c.player===me?"mine":""}"><div class="who">${esc(nameOf(c.player))}<span>${esc(when(c.created_at))}</span></div><div class="body">${esc(c.body)}</div></div>`).join(""):`<div class="empty">${BASE?"No comments yet. First one sets the tone.":"Comments only work on the live site."}</div>`;
+  $("#commentList").innerHTML=shown.length?shown.map(c=>`<div class="cmt ${c.player===me?"mine":""}"><div class="by">${esc(nameOf(c.player))}<span>${esc(when(c.created_at))}</span></div><div class="body">${esc(c.body)}</div></div>`).join(""):`<div class="empty">${BASE?"No comments yet. First one sets the tone.":"Comments only work on the live site."}</div>`;
   const more=$("#moreComments"); more.hidden=comments.length<=3; more.textContent=showAllComments?"Show recent 3":"Show all "+comments.length;
   $("#commentForm textarea").disabled=!BASE||!me; $("#commentForm button").disabled=!BASE||!me;
 
