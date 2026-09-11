@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#FFFFFF">
+<title>Istiqamah 40</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+img{max-width:100%}[hidden]{display:none!important}
+:root{
+  --bg:#FFFFFF; --surface:#F5F5F7; --card:#FFFFFF; --ink:#1D1D1F; --muted:#6E6E73; --line:#D2D2D7; --hair:#E8E8ED;
+  --accent:#0071E3; --accent-ink:#FFFFFF; --soft:#EAF2FC; --ok:#34C759; --danger:#FF3B30; --danger-soft:#FDECEB; --pending:#FF9F0A;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Inter","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --arabic:"Amiri","Scheherazade New","Times New Roman",serif;
+  --r:18px; --shadow:0 2px 12px rgba(0,0,0,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#000000; --surface:#1D1D1F; --card:#1D1D1F; --ink:#F5F5F7; --muted:#A1A1A6; --line:#3A3A3C; --hair:#2C2C2E;
+    --accent:#2997FF; --accent-ink:#FFFFFF; --soft:#0F2A47; --ok:#30D158; --danger:#FF453A; --danger-soft:#3A1D1B; --pending:#FFD60A;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#000000; --surface:#1D1D1F; --card:#1D1D1F; --ink:#F5F5F7; --muted:#A1A1A6; --line:#3A3A3C; --hair:#2C2C2E;
+  --accent:#2997FF; --accent-ink:#FFFFFF; --soft:#0F2A47; --ok:#30D158; --danger:#FF453A; --danger-soft:#3A1D1B; --pending:#FFD60A;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.47;margin:0;-webkit-font-smoothing:antialiased;letter-spacing:-.01em}
+.wrap{max-width:600px;margin:0 auto;padding:28px 20px 80px;display:flex;flex-direction:column;gap:24px}
+h1,h2,h3{margin:0;text-wrap:balance;line-height:1.15;letter-spacing:-.02em;font-weight:600}
+h2{font-size:1.25rem}
+.eyebrow{font-size:.75rem;color:var(--muted);font-weight:500}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;cursor:pointer;letter-spacing:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+
+/* header */
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding-bottom:4px}
+.head .ar{font-family:var(--arabic);font-size:2.6rem;line-height:1;color:var(--ink);direction:rtl;font-weight:700}
+.head .sub{margin-top:6px;font-size:2rem;font-weight:700;letter-spacing:-.03em;line-height:1}
+.head .tag{font-size:.95rem;color:var(--muted);margin-top:6px}
+.who{display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right}
+.who .name{font-weight:600;font-size:1rem}
+.who button{background:none;border:0;padding:0;color:var(--accent);font-size:.85rem}
+.who button:hover{text-decoration:underline}
+
+/* scoreboard */
+.board{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{background:var(--surface);border-radius:var(--r);padding:18px 18px 16px;display:flex;flex-direction:column;gap:2px}
+.tile .name{font-weight:600;font-size:1rem;color:var(--muted)}
+.tile .day{font-size:3.2rem;font-weight:700;line-height:1;letter-spacing:-.04em;color:var(--ink);margin-top:4px}
+.tile .day small{font-size:1rem;color:var(--muted);font-weight:500;letter-spacing:-.01em;margin-left:3px}
+.tile .meta{font-size:.8rem;color:var(--muted);margin-top:6px}
+.tile.me .name{color:var(--accent)}
+.pool{grid-column:1/-1;background:var(--surface);border-radius:var(--r);padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.pool .amt{font-size:2rem;font-weight:700;letter-spacing:-.03em;line-height:1;margin-top:2px}
+.pool .to{font-size:.8rem;color:var(--muted);text-align:right;line-height:1.4}
+.banner{background:var(--ink);color:var(--bg);border-radius:var(--r);padding:16px 18px;font-weight:600;font-size:1.05rem}
+.notice{background:var(--soft);color:var(--ink);border-radius:var(--r);padding:14px 18px;font-size:.95rem}
+
+/* checklist */
+.card{background:var(--card);border:1px solid var(--hair);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
+.card-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.datepick{display:flex;background:var(--surface);border-radius:999px;padding:3px}
+.datepick button{border:0;background:none;border-radius:999px;padding:5px 13px;font-size:.82rem;font-weight:500;color:var(--muted)}
+.datepick button[aria-pressed="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12);font-weight:600}
+.datepick button:disabled{opacity:.4;cursor:default}
+.ring{display:flex;align-items:center;gap:16px;margin-bottom:8px}
+.ring svg{width:68px;height:68px;flex:none}
+.ring .track{stroke:var(--surface);fill:none;stroke-width:7}
+.ring .bar{stroke:var(--accent);fill:none;stroke-width:7;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset .3s}
+.ring .txt{font-weight:600;font-size:1.05rem;fill:var(--ink);font-family:var(--font)}
+.ring .label{font-weight:600;font-size:1.1rem;letter-spacing:-.02em}
+.ring .hint{font-size:.9rem;color:var(--muted)}
+.items{display:flex;flex-direction:column}
+.item{display:flex;align-items:center;gap:14px;padding:13px 0;border:0;border-bottom:1px solid var(--hair);background:none;width:100%;text-align:left}
+.items .item:last-child{border-bottom:0}
+.item:disabled{cursor:default;opacity:.6}
+.box{width:26px;height:26px;flex:none;border:1.5px solid var(--line);border-radius:50%;display:grid;place-items:center;transition:background .15s,border-color .15s}
+.box svg{width:14px;height:14px;opacity:0}
+.item[aria-checked="true"] .box{background:var(--accent);border-color:var(--accent)}
+.item[aria-checked="true"] .box svg{opacity:1;stroke:var(--accent-ink)}
+.item[aria-checked="true"] .t b{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.item .t{flex:1}
+.item .t b{display:block;font-weight:500;font-size:1rem;letter-spacing:-.01em}
+.item .t span{display:block;font-size:.82rem;color:var(--muted);margin-top:1px}
+.item .grp{font-size:.7rem;color:var(--muted);width:44px;flex:none;text-align:right;font-weight:500}
+.weekly{margin-top:16px;background:var(--surface);border-radius:14px;padding:6px 14px 12px}
+.weekly .item{border:0;padding:10px 0 6px}
+.weekly .status{font-size:.82rem;color:var(--muted);padding-left:40px}
+.weekly .status.ok{color:var(--ok);font-weight:600}
+.weekly .status.due{color:var(--danger);font-weight:600}
+
+/* calendar grid */
+.cal{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin-top:10px}
+.cell{aspect-ratio:1;border-radius:7px;background:var(--surface);font-size:.66rem;display:grid;place-items:center;color:var(--muted);font-variant-numeric:tabular-nums;font-weight:500}
+.cell.done{background:var(--accent);color:var(--accent-ink)}
+.cell.missed{background:var(--danger);color:#fff}
+.cell.partial{box-shadow:inset 0 0 0 2px var(--pending);color:var(--ink)}
+.cell.pending{box-shadow:inset 0 0 0 1.5px var(--line);background:transparent;color:var(--ink)}
+.cell.future{opacity:.5}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.78rem;color:var(--muted);margin-top:14px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--surface)}
+.plist{display:flex;flex-direction:column;gap:18px}
+.plist .row-head{display:flex;justify-content:space-between;align-items:baseline}
+.plist .row-head b{font-weight:600}
+.plist .row-head span{font-size:.82rem;color:var(--muted)}
+
+/* ledger */
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th{text-align:left;font-size:.75rem;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--hair);font-weight:500}
+td{padding:9px 0;border-bottom:1px solid var(--hair);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.r,th.r{text-align:right}
+.tbl{overflow-x:auto}
+.miss{color:var(--danger);font-weight:500}
+.empty{color:var(--muted);font-size:.95rem;padding:4px 0}
+
+/* rules & settings */
+details{background:var(--card);border:1px solid var(--hair);border-radius:var(--r);padding:0 20px;box-shadow:var(--shadow)}
+summary{cursor:pointer;padding:16px 0;font-weight:600;font-size:1.1rem;letter-spacing:-.02em;list-style:none;display:flex;justify-content:space-between;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"";width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin-right:4px;transition:transform .2s}
+details[open] summary::after{transform:rotate(-135deg)}
+.rules{padding:0 0 20px;font-size:.95rem;display:flex;flex-direction:column;gap:12px;max-width:62ch;color:var(--ink)}
+.rules ol,.rules ul{margin:0;padding-left:22px}
+.rules li{margin-bottom:5px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 0 20px}
+.form label{display:flex;flex-direction:column;gap:5px;font-size:.8rem;color:var(--muted);font-weight:500}
+.form input,.form select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid transparent;border-radius:10px;padding:10px 12px;font-size:1rem}
+.form input:focus,.form select:focus{border-color:var(--accent);outline:none;background:var(--card)}
+.form .full{grid-column:1/-1}
+.form .save{grid-column:1/-1;background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:12px;font-weight:600;font-size:1rem}
+.form .save:hover{filter:brightness(1.08)}
+.form .msg{grid-column:1/-1;font-size:.82rem;color:var(--muted);min-height:1.2em}
+
+/* who modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:grid;place-items:center;padding:20px;z-index:10}
+.modal .box2{background:var(--card);border-radius:22px;padding:28px 24px;max-width:340px;width:100%;text-align:center;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal .box2 .ar{font-family:var(--arabic);font-size:2.4rem;color:var(--ink);line-height:1;font-weight:700}
+.modal .choices{display:flex;gap:10px}
+.modal .choices button{flex:1;padding:14px;border:0;border-radius:12px;background:var(--surface);font-weight:600;font-size:1.05rem}
+.modal .choices button:hover{background:var(--accent);color:var(--accent-ink)}
+.sync{font-size:.78rem;color:var(--muted);text-align:center}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+@media (max-width:400px){.head .sub{font-size:1.6rem}.tile .day{font-size:2.6rem}.form{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="wrap" id="app">
+  <header class="head">
+    <div>
+      <div class="ar">استقامة</div>
+      <div class="sub">Istiqamah 40</div>
+      <div class="tag">Forty days. No misses. Fajr to Fajr.</div>
+    </div>
+    <div class="who">
+      <span class="eyebrow">Checking in as</span>
+      <span class="name" id="whoName">—</span>
+      <button type="button" id="switchWho">switch</button>
+    </div>
+  </header>
+
+  <div id="banner" hidden></div>
+
+  <section class="board" id="board"></section>
+
+  <section class="card" id="today"></section>
+
+  <section class="card">
+    <div class="card-head"><h2>Since day one</h2><span class="muted" id="calMeta"></span></div>
+    <div class="plist" id="calendars"></div>
+    <div class="legend">
+      <span><i style="background:var(--accent)"></i>complete</span>
+      <span><i style="background:var(--danger)"></i>missed</span>
+      <span><i style="box-shadow:inset 0 0 0 2px var(--pending)"></i>in progress</span>
+      <span><i style="box-shadow:inset 0 0 0 1.5px var(--line);background:transparent"></i>open</span>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>Pool ledger</h2><span class="muted" id="ledgerMeta"></span></div>
+    <div class="tbl" id="ledger"></div>
+  </section>
+
+  <details>
+    <summary>The rules</summary>
+    <div class="rules" id="rules"></div>
+  </details>
+
+  <details>
+    <summary>Settings</summary>
+    <form class="form" id="settingsForm">
+      <label>Start date<input type="date" name="startDate" required></label>
+      <label>Day rolls over at (Fajr)<input type="time" name="rollover" required></label>
+      <label>Penalty per miss ($)<input type="number" name="penalty" min="1" step="1" required></label>
+      <label>Pool goes to<select name="poolMode"><option value="charity">Charity, winner picks</option><option value="winner">The winner</option></select></label>
+      <label class="full">Charity name (optional)<input type="text" name="charity" placeholder="e.g. LaunchGood campaign, local masjid"></label>
+      <button class="save" type="submit">Save settings</button>
+      <div class="msg" id="settingsMsg"></div>
+    </form>
+  </details>
+
+  <div class="sync" id="sync">Saving on this device only</div>
+</div>
+
+<div class="modal" id="whoModal" hidden>
+  <div class="box2">
+    <div class="ar">استقامة</div>
+    <h2>Who's checking in?</h2>
+    <p class="muted" style="margin:0;font-size:.9rem">This device will remember your pick. Honor system, and Allah sees.</p>
+    <div class="choices" id="whoChoices"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+const PLAYERS=[{id:"melan",name:"Melan"},{id:"yousef",name:"Yousef"}];
+const ITEMS=[
+  {id:"prayers",grp:"Deen",title:"All five daily prayers",sub:"Fajr, Dhuhr, Asr, Maghrib, Isha. Every one, before the day ends.",short:"prayers"},
+  {id:"extra",grp:"Deen",title:"Masjid, extra sunnah, or Tahajjud",sub:"One prayer in the masjid, one extra sunnah prayer, or Tahajjud. Any one counts.",short:"masjid or extra prayer"},
+  {id:"adhkar",grp:"Deen",title:"100 adhkar",sub:"Any dhikr. Count them.",short:"adhkar"},
+  {id:"reading",grp:"Mind",title:"Read 5 pages, at least 1 from the Quran",sub:"The rest from a real book. Not your phone.",short:"reading"},
+  {id:"deepwork",grp:"Mind",title:"30 minutes of deep work",sub:"Startup, work, or study. Phone in another room.",short:"deep work"},
+  {id:"nomusic",grp:"Guard",title:"No music",sub:"Nasheeds and Quran are fine.",short:"music"},
+  {id:"noharam",grp:"Guard",title:"No haram content",sub:"Explicit media, gossip, wasting the gaze. Extensive time on social media counts too.",short:"haram content"},
+  {id:"workout",grp:"Body",title:"45-minute workout",sub:"Anything that gets you sweating.",short:"workout"},
+  {id:"water",grp:"Body",title:"2 liters of water",sub:"Four 500 ml bottles.",short:"water"},
+  {id:"diet",grp:"Body",title:"Eat healthy, no added sugars",sub:"Whole food. Read the label.",short:"diet"}
+];
+const TARGET=40;
+const DEFAULTS={startDate:"2026-09-14",rollover:"05:00",penalty:20,poolMode:"charity",charity:""};
+const $=(s,r)=> (r||document).querySelector(s);
+
+let settings=Object.assign({},DEFAULTS);
+let players={melan:{days:{}},yousef:{days:{}}};
+let me=null, viewDate=null, api=false;
+
+/* ---------- dates ---------- */
+const pad=n=>String(n).padStart(2,"0");
+const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const parse=s=>{const p=s.split("-").map(Number);return new Date(p[0],p[1]-1,p[2]);};
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return ymd(d);};
+const diff=(a,b)=>Math.round((parse(b)-parse(a))/864e5);
+const fmt=s=>parse(s).toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});
+function today(){
+  const now=new Date(), hm=settings.rollover.split(":").map(Number);
+  const cut=new Date(now); cut.setHours(hm[0],hm[1],0,0);
+  const d=new Date(now); if(now<cut) d.setDate(d.getDate()-1);
+  return ymd(d);
+}
+
+/* ---------- evaluation ---------- */
+function evaluate(p){
+  const t=today(), start=settings.startDate, total=diff(start,t)+1;
+  const out={streak:0,misses:[],cells:[],won:null,notStarted:total<=0,startsIn:-total+1,fastOk:false,weekDays:0};
+  if(total<=0) return out;
+  let streak=0, tent=0, fastAt=[], lastMissIdx=-1;
+  const days=p.days||{};
+  for(let i=0;i<total;i++){
+    const date=addDays(start,i), rec=days[date]||{};
+    const done=ITEMS.filter(it=>rec[it.id]).length, complete=done===ITEMS.length;
+    const locked=diff(date,t)>=2;
+    let state;
+    if(complete){
+      streak++; tent=streak;
+      if(rec.fasted) fastAt.push(streak);
+      if(streak%7===0 && !fastAt.some(s=>s>streak-7)){
+        out.misses.push({date,day:streak,reason:"no fast in days "+(streak-6)+"–"+streak});
+        streak=0; tent=0; fastAt=[]; lastMissIdx=i; state="missed";
+      } else state="done";
+      if(state==="done" && streak>=TARGET && !out.won) out.won=date;
+    } else if(locked){
+      const missing=ITEMS.filter(it=>!rec[it.id]).map(it=>it.short);
+      out.misses.push({date,day:streak+1,reason:"skipped "+missing.join(", ")});
+      streak=0; tent=0; fastAt=[]; lastMissIdx=i; state="missed";
+    } else { tent++; state=done>0?"partial":"pending"; }
+    out.cells.push({date,state,done,day:tent,fasted:!!rec.fasted});
+  }
+  out.streak=streak;
+  // weekly fast status for the current run
+  const run=out.cells.slice(lastMissIdx+1);
+  const cur=run.length?run[run.length-1].day:0;
+  const week=Math.max(1,Math.ceil(cur/7)), lo=(week-1)*7+1, hi=week*7;
+  out.weekDays=hi-cur;
+  out.fastOk=run.some(c=>c.fasted && c.day>=lo && c.day<=hi);
+  out.week=week; out.curDay=cur;
+  return out;
+}
+
+/* ---------- storage ---------- */
+const LS="istiqamah40";
+const BASE="https://dogwqotaagjmytffitlj.supabase.co/functions/v1/istiqamah40";
+let KEY=null;
+try{ const k=new URL(location.href).searchParams.get("k"); if(k) localStorage.setItem(LS+":k",k); KEY=localStorage.getItem(LS+":k"); }catch(e){}
+async function call(path,body){
+  const r=await fetch(BASE+path,{method:body?"POST":"GET",headers:{"x-key":KEY||"","content-type":"application/json"},body:body?JSON.stringify(body):undefined});
+  if(!r.ok) throw new Error("HTTP "+r.status);
+  return r.json();
+}
+function applyState(st){
+  if(st.settings) settings=Object.assign({},DEFAULTS,st.settings);
+  const np={}; PLAYERS.forEach(p=>np[p.id]={days:{}});
+  (st.checkins||[]).forEach(c=>{ if(!np[c.player]) np[c.player]={days:{}}; np[c.player].days[c.day]=c.data||{}; });
+  players=np;
+}
+async function refresh(){
+  if(!BASE) return;
+  try{ applyState(await call("/state")); api=true; }catch(e){ console.error(e); api=false; }
+  syncLabel(); render();
+}
+function loadLocal(){ try{const j=JSON.parse(localStorage.getItem(LS)||"{}"); if(j.settings)settings=Object.assign({},DEFAULTS,j.settings); if(j.players)players=j.players;}catch(e){} }
+function saveLocal(){ try{localStorage.setItem(LS,JSON.stringify({settings,players}));}catch(e){} }
+async function savePatch(pid,date,patch){
+  const p=players[pid]||(players[pid]={days:{}});
+  p.days[date]=Object.assign({},p.days[date]||{},patch);
+  render();
+  if(BASE){
+    try{ const res=await call("/checkin",{player:pid,day:date,patch}); if(res&&res.data){ p.days[date]=res.data; render(); } }
+    catch(e){ console.error(e); flash("Couldn't save that. Check your connection and tap it again."); refresh(); }
+  } else saveLocal();
+}
+async function saveSettings(s){
+  settings=Object.assign({},settings,s); render();
+  if(BASE){ try{ await call("/settings",{value:settings}); }catch(e){ console.error(e); return false; } }
+  else saveLocal();
+  return true;
+}
+let flashT; function flash(m){ const el=$("#sync"); el.textContent=m; clearTimeout(flashT); flashT=setTimeout(syncLabel,4000); }
+function syncLabel(){ $("#sync").textContent=api?"Shared live between Melan and Yousef":(BASE?"Reconnecting…":"Saving on this device only"); }
+
+/* ---------- render ---------- */
+function render(){
+  const t=today();
+  if(!viewDate || diff(viewDate,t)<0 || diff(viewDate,t)>1) viewDate=t;
+  const ev={}; PLAYERS.forEach(p=>ev[p.id]=evaluate(players[p.id]||{days:{}}));
+  const misses=PLAYERS.reduce((n,p)=>n+ev[p.id].misses.length,0);
+  const pool=misses*settings.penalty;
+  const anyEv=ev[PLAYERS[0].id];
+
+  // banner
+  const b=$("#banner");
+  const winners=PLAYERS.filter(p=>ev[p.id].won).sort((a,c)=>ev[a.id].won<ev[c.id].won?-1:1);
+  if(winners.length){
+    const w=winners[0], tie=winners.filter(p=>ev[p.id].won===ev[w.id].won);
+    b.hidden=false; b.className="banner";
+    b.textContent=(tie.length>1?tie.map(p=>p.name).join(" and ")+" both":w.name)+" finished Istiqamah 40 on "+fmt(ev[w.id].won)+". "+(settings.poolMode==="charity"?"The pool goes to charity of "+(tie.length>1?"their":w.name+"'s")+" choice.":"The pool goes to "+(tie.length>1?"them, split.":w.name+"."));
+  } else if(anyEv.notStarted){
+    b.hidden=false; b.className="notice";
+    b.textContent="Starts "+fmt(settings.startDate)+(anyEv.startsIn===1?" (tomorrow)":" (in "+anyEv.startsIn+" days)")+". Use the time to plan your meals and pick your book.";
+  } else b.hidden=true;
+
+  // scoreboard
+  $("#board").innerHTML=PLAYERS.map(p=>{
+    const e=ev[p.id];
+    const tc=e.cells[e.cells.length-1];
+    const shown=e.notStarted?0:(tc&&tc.state!=="missed"?tc.day:e.streak);
+    const meta=e.notStarted?"not started":e.misses.length?e.misses.length+(e.misses.length===1?" reset":" resets")+" · last "+fmt(e.misses[e.misses.length-1].date):"no resets yet";
+    return `<div class="tile ${me===p.id?"me":""}"><span class="name">${p.name}</span><span class="day num">${shown}<small>/ ${TARGET}</small></span><span class="meta">${meta}</span></div>`;
+  }).join("")+`<div class="pool"><div><span class="eyebrow">Pool</span><div class="amt num">$${pool}</div></div><div class="to">${misses} ${misses===1?"miss":"misses"} × $${settings.penalty}<br>${settings.poolMode==="charity"?"goes to charity"+(settings.charity?": "+settings.charity:", winner picks"):"winner takes it"}</div></div>`;
+
+  // today card
+  const T=$("#today");
+  if(!me){ T.innerHTML=`<div class="empty">Pick who you are to start checking in.</div>`; }
+  else {
+    const e=ev[me], rec=(players[me].days||{})[viewDate]||{};
+    const cell=e.cells.find(c=>c.date===viewDate);
+    const done=ITEMS.filter(it=>rec[it.id]).length, pct=done/ITEMS.length;
+    const C=2*Math.PI*28;
+    const yest=addDays(t,-1);
+    const label=e.notStarted?"Challenge hasn't started":(cell?"Day "+cell.day+(cell.state==="done"?" complete":""):"");
+    const hint=e.notStarted?"Nothing to check off yet.":done===ITEMS.length?"All "+ITEMS.length+" done. Sleep well.":(ITEMS.length-done)+" left before Fajr"+(viewDate!==t?" (this is yesterday, still open)":"");
+    T.innerHTML=`<div class="card-head"><h2>${viewDate===t?"Today":"Yesterday"} · ${fmt(viewDate)}</h2>
+      <div class="datepick"><button type="button" data-d="${yest}" aria-pressed="${viewDate===yest}" ${diff(settings.startDate,yest)<0?"disabled":""}>Yesterday</button><button type="button" data-d="${t}" aria-pressed="${viewDate===t}">Today</button></div></div>
+      <div class="ring"><svg viewBox="0 0 64 64" aria-hidden="true"><circle class="track" cx="32" cy="32" r="28"/><circle class="bar" cx="32" cy="32" r="28" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct)}"/><text class="txt" x="32" y="37" text-anchor="middle">${done}/${ITEMS.length}</text></svg>
+      <div><div class="label">${label}</div><div class="hint">${hint}</div></div></div>
+      <div class="items" role="group" aria-label="Daily checklist">${ITEMS.map(it=>`<button type="button" class="item" role="checkbox" aria-checked="${!!rec[it.id]}" data-item="${it.id}" ${e.notStarted?"disabled":""}><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span><span class="t"><b>${it.title}</b><span>${it.sub}</span></span><span class="grp">${it.grp}</span></button>`).join("")}</div>
+      <div class="weekly"><button type="button" class="item" role="checkbox" aria-checked="${!!rec.fasted}" data-item="fasted" ${e.notStarted?"disabled":""}><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span><span class="t"><b>Fasted today</b><span>One fast required every 7 days. Monday or Thursday is sunnah.</span></span><span class="grp">Weekly</span></button>
+      <div class="status ${e.notStarted?"":e.fastOk?"ok":e.weekDays<=2?"due":""}">${e.notStarted?"":e.fastOk?"Week "+e.week+" fast done.":"Week "+e.week+": no fast yet. "+(e.weekDays===0?"Today is the last day.":e.weekDays+" day"+(e.weekDays===1?"":"s")+" left, today included.")}</div></div>`;
+    T.querySelectorAll(".item").forEach(btn=>btn.addEventListener("click",()=>{
+      const id=btn.dataset.item, cur=btn.getAttribute("aria-checked")==="true";
+      savePatch(me,viewDate,{[id]:!cur});
+    }));
+    T.querySelectorAll(".datepick button").forEach(btn=>btn.addEventListener("click",()=>{viewDate=btn.dataset.d;render();}));
+  }
+
+  // calendars
+  $("#calMeta").textContent=anyEv.notStarted?"":"Day "+(diff(settings.startDate,t)+1)+" since "+fmt(settings.startDate);
+  $("#calendars").innerHTML=PLAYERS.map(p=>{
+    const e=ev[p.id]; const n=Math.max(TARGET,e.cells.length);
+    const cells=[]; for(let i=0;i<n;i++){ const c=e.cells[i]; cells.push(c?`<div class="cell ${c.state}" title="${fmt(c.date)}: ${c.state}${c.fasted?", fasted":""}">${c.state==="missed"?"✕":c.day||""}</div>`:`<div class="cell future"></div>`); }
+    return `<div><div class="row-head"><b>${p.name}</b><span>current run: ${e.streak} complete</span></div><div class="cal">${cells.join("")}</div></div>`;
+  }).join("");
+
+  // ledger
+  const rows=[]; PLAYERS.forEach(p=>ev[p.id].misses.forEach(m=>rows.push({p,m})));
+  rows.sort((a,b)=>a.m.date<b.m.date?-1:1);
+  $("#ledgerMeta").textContent=rows.length?"$"+pool+" owed in total":"";
+  $("#ledger").innerHTML=rows.length?`<table><thead><tr><th>Date</th><th>Who</th><th>Day</th><th>What happened</th><th class="r">Owes</th></tr></thead><tbody>${rows.map(r=>`<tr><td class="num">${fmt(r.m.date)}</td><td>${r.p.name}</td><td class="num">${r.m.day}</td><td class="miss">${r.m.reason}</td><td class="r num">$${settings.penalty}</td></tr>`).join("")}</tbody></table>
+    <table style="margin-top:12px"><tbody>${PLAYERS.map(p=>`<tr><td><b>${p.name}</b> total</td><td class="r num"><b>$${ev[p.id].misses.length*settings.penalty}</b></td></tr>`).join("")}</tbody></table>`:`<div class="empty">Nobody owes anything. Keep it that way.</div>`;
+
+  // rules
+  $("#rules").innerHTML=`<p style="margin:0">Every day runs from Fajr to Fajr (${settings.rollover} on this device). Before the next Fajr, every one of these has to be checked, or the day is a miss:</p>
+    <ol>${ITEMS.map(it=>`<li><b>${it.title}.</b> ${it.sub}</li>`).join("")}</ol>
+    <p style="margin:0"><b>Weekly:</b> one fast in every 7-day block of your streak (days 1–7, 8–14, and so on). Miss the block and day 7 counts as a miss.</p>
+    <p style="margin:0"><b>A miss resets you to Day 1</b> and adds $${settings.penalty} to the pool under your name. Yesterday stays open until the next Fajr in case you forgot to log it. Before that it locks and is judged as it stands.</p>
+    <p style="margin:0"><b>First to ${TARGET} in a row wins.</b> Same-day finish is a tie. ${settings.poolMode==="charity"?"The pool is given to a charity the winner picks. Money in from penalties, money out to charity, nobody profits, so it's not a wager.":"The pool goes to the winner. Confirm with your imam that this is permissible before relying on it."}</p>
+    <p style="margin:0" class="muted">Honor system. You're the one who knows.</p>`;
+
+  // settings form
+  const f=$("#settingsForm");
+  f.startDate.value=settings.startDate; f.rollover.value=settings.rollover; f.penalty.value=settings.penalty; f.poolMode.value=settings.poolMode; f.charity.value=settings.charity||"";
+  $("#whoName").textContent=me?PLAYERS.find(p=>p.id===me).name:"—";
+}
+
+/* ---------- who ---------- */
+function askWho(){ const m=$("#whoModal"); m.hidden=false; }
+$("#whoChoices").innerHTML=PLAYERS.map(p=>`<button type="button" data-id="${p.id}">${p.name}</button>`).join("");
+$("#whoChoices").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b)return; me=b.dataset.id; try{localStorage.setItem(LS+":me",me);}catch(x){} $("#whoModal").hidden=true; render(); });
+$("#switchWho").addEventListener("click",askWho);
+$("#settingsForm").addEventListener("submit",async e=>{
+  e.preventDefault(); const f=e.target;
+  const ok=await saveSettings({startDate:f.startDate.value,rollover:f.rollover.value,penalty:Number(f.penalty.value)||20,poolMode:f.poolMode.value,charity:f.charity.value.trim()});
+  $("#settingsMsg").textContent=ok?"Saved.":"Couldn't save. Try again.";
+  setTimeout(()=>{$("#settingsMsg").textContent="";},3000);
+});
+
+/* ---------- boot ---------- */
+if(!BASE) loadLocal();
+try{ me=localStorage.getItem(LS+":me")||null; }catch(e){}
+syncLabel(); render();
+if(!me) askWho();
+setInterval(render,60000);
+if(BASE){
+  refresh();
+  setInterval(refresh,20000);
+  document.addEventListener("visibilitychange",()=>{ if(!document.hidden) refresh(); });
+  window.addEventListener("focus",refresh);
+}
+})();
+</script>
+
+</body>
+</html>
