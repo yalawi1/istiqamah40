@@ -189,6 +189,18 @@ details[open] summary::after{transform:rotate(-135deg)}
 
   <section class="board" id="board"></section>
 
+  <details id="commentsBox">
+    <summary><span>Comments<span class="cnt" id="commentCount"></span></span></summary>
+    <div class="comments">
+      <form class="cform" id="commentForm">
+        <textarea name="body" rows="1" maxlength="500" placeholder="Say something to each other" required></textarea>
+        <button type="submit">Post</button>
+      </form>
+      <div class="clist" id="commentList"></div>
+      <button type="button" class="more" id="moreComments" hidden>Show all</button>
+    </div>
+  </details>
+
   <section class="card" id="today"></section>
 
   <section class="card">
@@ -206,18 +218,6 @@ details[open] summary::after{transform:rotate(-135deg)}
     <div class="card-head"><h2>Pool ledger</h2><span class="muted" id="ledgerMeta"></span></div>
     <div class="tbl" id="ledger"></div>
   </section>
-
-  <details id="commentsBox">
-    <summary><span>Comments<span class="cnt" id="commentCount"></span></span></summary>
-    <div class="comments">
-      <form class="cform" id="commentForm">
-        <textarea name="body" rows="1" maxlength="500" placeholder="Say something to each other" required></textarea>
-        <button type="submit">Post</button>
-      </form>
-      <div class="clist" id="commentList"></div>
-      <button type="button" class="more" id="moreComments" hidden>Show all</button>
-    </div>
-  </details>
 
   <details>
     <summary>The rules</summary>
