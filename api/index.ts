@@ -35,11 +35,12 @@ Deno.serve(async (req: Request) => {
 
   try {
     if (sub === "state" && req.method === "GET") {
-      const [s, c] = await Promise.all([
+      const [s, c, m] = await Promise.all([
         rest("istiqamah_settings?id=eq.1&select=value"),
         rest("istiqamah_checkins?select=player,day,data"),
+        rest("istiqamah_comments?select=id,player,body,created_at&order=created_at.desc&limit=30"),
       ]);
-      return json({ settings: s?.[0]?.value ?? null, checkins: c ?? [] });
+      return json({ settings: s?.[0]?.value ?? null, checkins: c ?? [], comments: m ?? [] });
     }
     if (sub === "checkin" && req.method === "POST") {
       const { player, day, patch } = await req.json();
@@ -54,6 +55,17 @@ Deno.serve(async (req: Request) => {
         body: JSON.stringify({ player, day, data, updated_at: new Date().toISOString() }),
       });
       return json({ ok: true, data });
+    }
+    if (sub === "comment" && req.method === "POST") {
+      const { player, body } = await req.json();
+      const text = typeof body === "string" ? body.trim().slice(0, 500) : "";
+      if (!PLAYERS.has(player) || !text) return json({ error: "bad request" }, 400);
+      const rows = await rest("istiqamah_comments", {
+        method: "POST",
+        headers: { Prefer: "return=representation" },
+        body: JSON.stringify({ player, body: text }),
+      });
+      return json({ ok: true, comment: rows?.[0] ?? null });
     }
     if (sub === "settings" && req.method === "POST") {
       const { value } = await req.json();

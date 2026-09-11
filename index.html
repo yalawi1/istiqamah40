@@ -121,6 +121,24 @@ td.r,th.r{text-align:right}
 .miss{color:var(--danger);font-weight:500}
 .empty{color:var(--muted);font-size:.95rem;padding:4px 0}
 
+/* comments */
+.comments{padding:0 0 20px;display:flex;flex-direction:column;gap:12px}
+.cform{display:flex;gap:10px;align-items:flex-end}
+.cform textarea{flex:1;font:inherit;color:var(--ink);background:var(--surface);border:1px solid transparent;border-radius:12px;padding:10px 12px;font-size:1rem;resize:none;line-height:1.4;min-height:44px}
+.cform textarea:focus{border-color:var(--accent);outline:none;background:var(--card)}
+.cform button{background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:11px 18px;font-weight:600;font-size:.95rem;flex:none}
+.cform button:disabled{opacity:.5;cursor:default}
+.clist{display:flex;flex-direction:column}
+.cmt{display:flex;flex-direction:column;gap:3px;padding:10px 0;border-bottom:1px solid var(--hair)}
+.cmt:last-child{border-bottom:0}
+.cmt .who{font-weight:600;font-size:.9rem}
+.cmt .who span{color:var(--muted);font-weight:400;margin-left:8px;font-size:.8rem}
+.cmt .body{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.95rem}
+.cmt.mine .who{color:var(--accent)}
+.more{background:none;border:0;color:var(--accent);padding:2px 0;font-size:.9rem;align-self:flex-start;font-weight:500}
+.more:hover{text-decoration:underline}
+summary .cnt{color:var(--muted);font-weight:400;font-size:.9rem;margin-left:8px}
+
 /* rules & settings */
 details{background:var(--card);border:1px solid var(--hair);border-radius:var(--r);padding:0 20px;box-shadow:var(--shadow)}
 summary{cursor:pointer;padding:16px 0;font-weight:600;font-size:1.1rem;letter-spacing:-.02em;list-style:none;display:flex;justify-content:space-between;align-items:center}
@@ -189,6 +207,18 @@ details[open] summary::after{transform:rotate(-135deg)}
     <div class="tbl" id="ledger"></div>
   </section>
 
+  <details id="commentsBox">
+    <summary><span>Comments<span class="cnt" id="commentCount"></span></span></summary>
+    <div class="comments">
+      <form class="cform" id="commentForm">
+        <textarea name="body" rows="1" maxlength="500" placeholder="Say something to each other" required></textarea>
+        <button type="submit">Post</button>
+      </form>
+      <div class="clist" id="commentList"></div>
+      <button type="button" class="more" id="moreComments" hidden>Show all</button>
+    </div>
+  </details>
+
   <details>
     <summary>The rules</summary>
     <div class="rules" id="rules"></div>
@@ -242,6 +272,8 @@ const $=(s,r)=> (r||document).querySelector(s);
 let settings=Object.assign({},DEFAULTS);
 let players={melan:{days:{}},yousef:{days:{}}};
 let me=null, viewDate=null, api=false;
+let comments=[], showAllComments=false;
+const esc=x=>String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
 /* ---------- dates ---------- */
 const pad=n=>String(n).padStart(2,"0");
@@ -310,6 +342,7 @@ function applyState(st){
   const np={}; PLAYERS.forEach(p=>np[p.id]={days:{}});
   (st.checkins||[]).forEach(c=>{ if(!np[c.player]) np[c.player]={days:{}}; np[c.player].days[c.day]=c.data||{}; });
   players=np;
+  comments=Array.isArray(st.comments)?st.comments:[];
 }
 async function refresh(){
   if(!BASE) return;
@@ -414,6 +447,15 @@ function render(){
     <p style="margin:0"><b>First to ${TARGET} in a row wins.</b> Same-day finish is a tie. ${settings.poolMode==="charity"?"The pool is given to a charity the winner picks. Money in from penalties, money out to charity, nobody profits, so it's not a wager.":"The pool goes to the winner. Confirm with your imam that this is permissible before relying on it."}</p>
     <p style="margin:0" class="muted">Honor system. You're the one who knows.</p>`;
 
+  // comments
+  const nameOf=id=>(PLAYERS.find(p=>p.id===id)||{name:id}).name;
+  const when=iso=>{const d=new Date(iso),now=new Date();const same=d.toDateString()===now.toDateString();return (same?"Today":d.toLocaleDateString(undefined,{month:"short",day:"numeric"}))+" "+d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"});};
+  $("#commentCount").textContent=comments.length?comments.length:"";
+  const shown=showAllComments?comments:comments.slice(0,3);
+  $("#commentList").innerHTML=shown.length?shown.map(c=>`<div class="cmt ${c.player===me?"mine":""}"><div class="who">${esc(nameOf(c.player))}<span>${esc(when(c.created_at))}</span></div><div class="body">${esc(c.body)}</div></div>`).join(""):`<div class="empty">${BASE?"No comments yet. First one sets the tone.":"Comments only work on the live site."}</div>`;
+  const more=$("#moreComments"); more.hidden=comments.length<=3; more.textContent=showAllComments?"Show recent 3":"Show all "+comments.length;
+  $("#commentForm textarea").disabled=!BASE||!me; $("#commentForm button").disabled=!BASE||!me;
+
   // settings form
   const f=$("#settingsForm");
   f.startDate.value=settings.startDate; f.rollover.value=settings.rollover; f.penalty.value=settings.penalty; f.poolMode.value=settings.poolMode; f.charity.value=settings.charity||"";
@@ -431,6 +473,16 @@ $("#settingsForm").addEventListener("submit",async e=>{
   $("#settingsMsg").textContent=ok?"Saved.":"Couldn't save. Try again.";
   setTimeout(()=>{$("#settingsMsg").textContent="";},3000);
 });
+
+$("#moreComments").addEventListener("click",()=>{ showAllComments=!showAllComments; render(); });
+$("#commentForm").addEventListener("submit",async e=>{
+  e.preventDefault(); if(!me){ askWho(); return; }
+  const ta=e.target.body, text=ta.value.trim(); if(!text) return;
+  const btn=e.target.querySelector("button"); btn.disabled=true;
+  try{ const res=await call("/comment",{player:me,body:text}); if(res&&res.comment) comments.unshift(res.comment); ta.value=""; render(); refresh(); }
+  catch(err){ console.error(err); flash("Couldn't post that. Check your connection and try again."); btn.disabled=false; }
+});
+$("#commentForm textarea").addEventListener("keydown",e=>{ if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); $("#commentForm").requestSubmit(); } });
 
 /* ---------- boot ---------- */
 if(!BASE) loadLocal();
