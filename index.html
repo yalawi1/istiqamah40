@@ -305,21 +305,21 @@ function evaluate(p){
     const date=addDays(start,i), rec=days[date]||{};
     const done=ITEMS.filter(it=>rec[it.id]).length, complete=done===ITEMS.length;
     const locked=diff(date,t)>=2;
-    let state;
+    let state, missDay=0;
     if(complete){
       streak++; tent=streak;
       if(rec.fasted) fastAt.push(streak);
       if(streak%7===0 && !fastAt.some(s=>s>streak-7)){
         out.misses.push({date,day:streak,reason:"no fast in days "+(streak-6)+"–"+streak});
-        streak=0; tent=0; fastAt=[]; lastMissIdx=i; state="missed";
+        missDay=streak; streak=0; tent=0; fastAt=[]; lastMissIdx=i; state="missed";
       } else state="done";
       if(state==="done" && streak>=TARGET && !out.won) out.won=date;
     } else if(locked){
       const missing=ITEMS.filter(it=>!rec[it.id]).map(it=>it.short);
       out.misses.push({date,day:streak+1,reason:"skipped "+missing.join(", ")});
-      streak=0; tent=0; fastAt=[]; lastMissIdx=i; state="missed";
+      missDay=streak+1; streak=0; tent=0; fastAt=[]; lastMissIdx=i; state="missed";
     } else { tent++; state=done>0?"partial":"pending"; }
-    out.cells.push({date,state,done,day:tent,fasted:!!rec.fasted});
+    out.cells.push({date,state,done,day:tent,missDay,fasted:!!rec.fasted});
   }
   out.streak=streak;
   // weekly fast status for the current run
@@ -413,7 +413,7 @@ function render(){
     const done=ITEMS.filter(it=>rec[it.id]).length, pct=done/ITEMS.length;
     const C=2*Math.PI*28;
     const yest=addDays(t,-1);
-    const label=e.notStarted?"Challenge hasn't started":(cell?"Day "+cell.day+(cell.state==="done"?" complete":""):"");
+    const label=e.notStarted?"Challenge hasn't started":(cell?(cell.state==="missed"?"Missed on day "+cell.missDay:"Day "+cell.day+(cell.state==="done"?" complete":"")):"");
     const isPast=viewDate!==t&&viewDate!==yest;
     const hint=e.notStarted?"Nothing to check off yet.":done===ITEMS.length?"All "+ITEMS.length+" done."+(isPast?"":" Sleep well."):isPast?(ITEMS.length-done)+" unchecked. Fixing a past day changes your streak and the ledger.":(ITEMS.length-done)+" left before Fajr"+(viewDate!==t?" (this is yesterday, still open)":"");
     const heading=viewDate===t?"Today":viewDate===yest?"Yesterday":"Editing";
