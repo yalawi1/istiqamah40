@@ -104,6 +104,11 @@ button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visi
 .cell.partial{box-shadow:inset 0 0 0 2px var(--pending);color:var(--ink)}
 .cell.pending{box-shadow:inset 0 0 0 1.5px var(--line);background:transparent;color:var(--ink)}
 .cell.future{opacity:.5}
+button.cell{border:0;padding:0;font:inherit;font-size:.66rem;cursor:pointer;color:var(--muted)}
+button.cell.done{color:var(--accent-ink)} button.cell.missed{color:#fff} button.cell.partial,button.cell.pending{color:var(--ink)}
+button.cell:hover{filter:brightness(.92)}
+.cell.sel{outline:2px solid var(--ink);outline-offset:2px}
+.pastnote{background:var(--soft);border-radius:10px;padding:8px 12px;font-size:.82rem;color:var(--muted);margin-bottom:12px}
 .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.78rem;color:var(--muted);margin-top:14px}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--surface)}
 .plist{display:flex;flex-direction:column;gap:18px}
@@ -372,7 +377,7 @@ function syncLabel(){ $("#sync").textContent=api?"Shared live between Melan and 
 /* ---------- render ---------- */
 function render(){
   const t=today();
-  if(!viewDate || diff(viewDate,t)<0 || diff(viewDate,t)>1) viewDate=t;
+  if(!viewDate || diff(viewDate,t)<0 || diff(settings.startDate,viewDate)<0) viewDate=t;
   const ev={}; PLAYERS.forEach(p=>ev[p.id]=evaluate(players[p.id]||{days:{}}));
   const misses=PLAYERS.reduce((n,p)=>n+ev[p.id].misses.length,0);
   const pool=misses*settings.penalty;
@@ -409,9 +414,12 @@ function render(){
     const C=2*Math.PI*28;
     const yest=addDays(t,-1);
     const label=e.notStarted?"Challenge hasn't started":(cell?"Day "+cell.day+(cell.state==="done"?" complete":""):"");
-    const hint=e.notStarted?"Nothing to check off yet.":done===ITEMS.length?"All "+ITEMS.length+" done. Sleep well.":(ITEMS.length-done)+" left before Fajr"+(viewDate!==t?" (this is yesterday, still open)":"");
-    T.innerHTML=`<div class="card-head"><h2>${viewDate===t?"Today":"Yesterday"} · ${fmt(viewDate)}</h2>
-      <div class="datepick"><button type="button" data-d="${yest}" aria-pressed="${viewDate===yest}" ${diff(settings.startDate,yest)<0?"disabled":""}>Yesterday</button><button type="button" data-d="${t}" aria-pressed="${viewDate===t}">Today</button></div></div>
+    const isPast=viewDate!==t&&viewDate!==yest;
+    const hint=e.notStarted?"Nothing to check off yet.":done===ITEMS.length?"All "+ITEMS.length+" done."+(isPast?"":" Sleep well."):isPast?(ITEMS.length-done)+" unchecked. Fixing a past day changes your streak and the ledger.":(ITEMS.length-done)+" left before Fajr"+(viewDate!==t?" (this is yesterday, still open)":"");
+    const heading=viewDate===t?"Today":viewDate===yest?"Yesterday":"Editing";
+    T.innerHTML=`<div class="card-head"><h2>${heading} · ${fmt(viewDate)}</h2>
+      <div class="datepick">${isPast?`<button type="button" data-d="${t}">Back to today</button>`:`<button type="button" data-d="${yest}" aria-pressed="${viewDate===yest}" ${diff(settings.startDate,yest)<0?"disabled":""}>Yesterday</button><button type="button" data-d="${t}" aria-pressed="${viewDate===t}">Today</button>`}</div></div>
+      ${isPast?`<div class="pastnote">Tap any day in your calendar below to open it. Honor system still applies.</div>`:""}
       <div class="ring"><svg viewBox="0 0 64 64" aria-hidden="true"><circle class="track" cx="32" cy="32" r="28"/><circle class="bar" cx="32" cy="32" r="28" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct)}"/><text class="txt" x="32" y="37" text-anchor="middle">${done}/${ITEMS.length}</text></svg>
       <div><div class="label">${label}</div><div class="hint">${hint}</div></div></div>
       <div class="items" role="group" aria-label="Daily checklist">${ITEMS.map(it=>`<button type="button" class="item" role="checkbox" aria-checked="${!!rec[it.id]}" data-item="${it.id}" ${e.notStarted?"disabled":""}><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span><span class="t"><b>${it.title}</b><span>${it.sub}</span></span><span class="grp">${it.grp}</span></button>`).join("")}</div>
@@ -428,9 +436,11 @@ function render(){
   $("#calMeta").textContent=anyEv.notStarted?"":"Day "+(diff(settings.startDate,t)+1)+" since "+fmt(settings.startDate);
   $("#calendars").innerHTML=PLAYERS.map(p=>{
     const e=ev[p.id]; const n=Math.max(TARGET,e.cells.length);
-    const cells=[]; for(let i=0;i<n;i++){ const c=e.cells[i]; cells.push(c?`<div class="cell ${c.state}" title="${fmt(c.date)}: ${c.state}${c.fasted?", fasted":""}">${c.state==="missed"?"✕":c.day||""}</div>`:`<div class="cell future"></div>`); }
-    return `<div><div class="row-head"><b>${p.name}</b><span>current run: ${e.streak} complete</span></div><div class="cal">${cells.join("")}</div></div>`;
+    const mine=p.id===me;
+    const cells=[]; for(let i=0;i<n;i++){ const c=e.cells[i]; cells.push(c?(mine?`<button type="button" class="cell ${c.state} ${c.date===viewDate?"sel":""}" data-d="${c.date}" title="${fmt(c.date)}: ${c.state}${c.fasted?", fasted":""}. Tap to edit.">${c.state==="missed"?"✕":c.day||""}</button>`:`<div class="cell ${c.state}" title="${fmt(c.date)}: ${c.state}${c.fasted?", fasted":""}">${c.state==="missed"?"✕":c.day||""}</div>`):`<div class="cell future"></div>`); }
+    return `<div><div class="row-head"><b>${p.name}</b><span>${mine&&!e.notStarted?"tap a day to edit it · ":""}current run: ${e.streak} complete</span></div><div class="cal">${cells.join("")}</div></div>`;
   }).join("");
+  $("#calendars").querySelectorAll("button.cell").forEach(b=>b.addEventListener("click",()=>{ viewDate=b.dataset.d; render(); $("#today").scrollIntoView({behavior:"smooth",block:"start"}); }));
 
   // ledger
   const rows=[]; PLAYERS.forEach(p=>ev[p.id].misses.forEach(m=>rows.push({p,m})));
@@ -443,7 +453,7 @@ function render(){
   $("#rules").innerHTML=`<p style="margin:0">Every day runs from Fajr to Fajr (${settings.rollover} on this device). Before the next Fajr, every one of these has to be checked, or the day is a miss:</p>
     <ol>${ITEMS.map(it=>`<li><b>${it.title}.</b> ${it.sub}</li>`).join("")}</ol>
     <p style="margin:0"><b>Weekly:</b> one fast in every 7-day block of your streak (days 1–7, 8–14, and so on). Miss the block and day 7 counts as a miss.</p>
-    <p style="margin:0"><b>A miss resets you to Day 1</b> and adds $${settings.penalty} to the pool under your name. Yesterday stays open until the next Fajr in case you forgot to log it. Before that it locks and is judged as it stands.</p>
+    <p style="margin:0"><b>A miss resets you to Day 1</b> and adds $${settings.penalty} to the pool under your name. Yesterday stays open until the next Fajr in case you forgot to log it. After that it is judged as it stands, but you can tap any day in your calendar to go back and fix an honest mistake.</p>
     <p style="margin:0"><b>First to ${TARGET} in a row wins.</b> Same-day finish is a tie. ${settings.poolMode==="charity"?"The pool is given to a charity the winner picks. Money in from penalties, money out to charity, nobody profits, so it's not a wager.":"The pool goes to the winner. Confirm with your imam that this is permissible before relying on it."}</p>
     <p style="margin:0" class="muted">Honor system. You're the one who knows.</p>`;
 
