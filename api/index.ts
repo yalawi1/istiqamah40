@@ -71,7 +71,8 @@ Deno.serve(async (req: Request) => {
       const { value } = await req.json();
       if (typeof value !== "object" || value === null) return json({ error: "bad request" }, 400);
       const v = {
-        startDate: /^\d{4}-\d{2}-\d{2}$/.test(value.startDate) ? value.startDate : "2026-09-14",
+        startDate: /^\d{4}-\d{2}-\d{2}$/.test(value.startDate) ? value.startDate : "2026-11-20",
+        endDate: /^\d{4}-\d{2}-\d{2}$/.test(value.endDate) ? value.endDate : "2026-12-31",
         rollover: /^\d{2}:\d{2}$/.test(value.rollover) ? value.rollover : "05:00",
         penalty: Number.isFinite(value.penalty) && value.penalty > 0 ? Math.round(value.penalty) : 20,
         poolMode: value.poolMode === "winner" ? "winner" : "charity",
